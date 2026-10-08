@@ -15,7 +15,8 @@ const userSchema = new mongoose.Schema({
     },
     password:{
         type:String,
-        required:true
+        required:true,
+        select : false
     },
     role:{
         type:String,
@@ -28,17 +29,17 @@ const userSchema = new mongoose.Schema({
     }
 })
 
-userSchema.pre('save', async function(next){
+userSchema.pre('save', async function(){
     try{
         if(!this.isModified('password')){
-            return next();
+            return 
         }
         const solt = await bcrypt.genSalt(12);
 
         this.password = await bcrypt.hash(this.password,solt);
-        return next()
+        return ;
     }catch(error){
-        return next(error);
+        throw error;
     }
 })
 userSchema.methods.isMatched = async function(password){
